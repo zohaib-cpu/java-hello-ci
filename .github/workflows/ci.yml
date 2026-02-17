@@ -4,41 +4,34 @@ on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
+
+permissions:
+  contents: write   # <--- important for release creation
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Code checkout
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Step 2: Setup Java
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '21'
 
-      # Step 3: Compile Java
       - name: Compile
         run: javac HelloWorld.java
 
-      # Step 4: Run tests (optional)
       - name: Run HelloWorld
         run: java HelloWorld
 
-      # Step 5: Package as executable JAR
       - name: Package JAR
         run: jar cfe HelloWorld.jar HelloWorld HelloWorld.class
 
-      # Step 6: Upload to GitHub Release
       - name: Create GitHub Release
-        id: create_release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: v1.${{ github.run_number }}
